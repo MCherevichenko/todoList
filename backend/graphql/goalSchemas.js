@@ -8,6 +8,7 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLDate = require('graphql-date');
 const GoalModel = require('../models').Goal;
+const TaskModel = require('../models').Task;
 
 const taskType = new GraphQLObjectType({
   name: "task",
@@ -30,7 +31,7 @@ const taskType = new GraphQLObjectType({
       },
       updatedAt: {
         type: GraphQLDate
-      }
+      },
     }
   }
 })
@@ -74,6 +75,37 @@ const queryType = new GraphQLObjectType({
             throw new Error('Error')
           }
           return goals
+        },
+      },
+      tasks: {
+        type: new GraphQLList(taskType),
+        resolve: function () {
+          const tasks = TaskModel.findAll({
+            order: [
+              ['createdAt', 'ASC']
+            ],
+          })
+          if (!tasks) {
+            throw new Error('Error')
+          }
+          return tasks
+        }
+      },
+      task: {
+        type: new GraphQLList(taskType),
+        resolve: function (currentId) {
+          const asd = TaskModel.findAll({
+            order: [
+              ['createdAt', 'ASC']
+            ],
+            where: {
+              goal_id: 3,
+            }
+          })
+          if (!asd) {
+            throw new Error('Error')
+          }
+          return asd
         }
       }
     }
@@ -113,6 +145,9 @@ const mutation = new GraphQLObjectType({
           title: {
             type: new GraphQLNonNull(GraphQLString)
           },
+          done: {
+            type: new GraphQLNonNull(GraphQLBoolean)
+          }
         },
         resolve(root, params) {
           return GoalModel
@@ -152,7 +187,82 @@ const mutation = new GraphQLObjectType({
             })
             .catch((error) => { throw new Error(error); });
         }
-      }
+      },
+      addTask: {
+        type: taskType,
+        args: {
+          text: {
+            type: new GraphQLNonNull(GraphQLString)
+          },
+          done: {
+            type: new GraphQLNonNull(GraphQLBoolean)
+          },
+          goal_id: {
+            type: new GraphQLNonNull(GraphQLInt)
+          }
+        },
+        resolve: function (root, params) {
+          const taskModel = new TaskModel(params);
+          const newTask = taskModel.save();
+          if (!newTask) {
+            throw new Error('Error');
+          }
+          return newTask
+        }
+      },
+      updateTask: {
+        type: taskType,
+        args: {
+          id: {
+            name: 'id',
+            type: new GraphQLNonNull(GraphQLInt)
+          },
+          text: {
+            type: new GraphQLNonNull(GraphQLString)
+          },
+          done: {
+            type: new GraphQLNonNull(GraphQLBoolean)
+          }
+        },
+        resolve(root, params) {
+          return TaskModel
+            .findByPk(params.id)
+            .then(task => {
+              if (!task) {
+                throw new Error('Not found');
+              }
+              return task
+                .update({
+                  text: params.text || task.text,
+                })
+                .then(() => { return task; })
+                .catch((error) => { throw new Error(error); });
+            })
+            .catch((error) => { throw new Error(error); });
+        }
+      },
+      removeTask: {
+        type: taskType,
+        args: {
+          id: {
+            type: new GraphQLNonNull(GraphQLInt)
+          }
+        },
+        resolve(root, params) {
+          return TaskModel
+            .findByPk(params.id)
+            .then(task => {
+              if (!task) {
+                throw new Error('Not found');
+              }
+              return task
+                .destroy()
+                .then(() => { return task; })
+                .catch((error) => { throw new Error(error); });
+            })
+            .catch((error) => { throw new Error(error); });
+        }
+      },
     }
   }
 });

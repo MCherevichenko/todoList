@@ -1,8 +1,9 @@
 /backend/node_modules/
-/backend/.history
-/backend/.DS_Store
+/backend/.history/
+/backend/.DS_Store/
 .DS_Store
+documentation
 
-/frontend/node_modules
-/frontend/.DS_Store
-/frontend/.history
+/frontend/node_modules/
+/frontend/.DS_Store/
+/frontend/.history/

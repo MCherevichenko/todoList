@@ -2,6 +2,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { gql, useQuery, useMutation } from "@apollo/client";
+import TaskList from './TasksList';
 
 const GET_GOALS = gql`
     query GetGoals{
@@ -16,17 +17,21 @@ const GET_GOALS = gql`
 function TodoList() {
     const { loading, error, data } = useQuery(GET_GOALS);
     const goals = data && data?.goals;
-    if (loading) {
+    // console.log(goals?.[0].title);
+    if (loading ) {
         return <h2>Loading...</h2>
     }
-    console.log(goals)
     return (
         <div className='goal-form'>
             <FormGroup >
                 {goals.map((goal) => (
-                    <FormControlLabel key={goal.id} control={<Checkbox defaultChecked={goal.done} />} label={goal.title} />
+                    <div key={goal.id}>
+                        <FormControlLabel  control={<Checkbox defaultChecked={goal.done} />} label={goal.title} />
+                        <TaskList goal_id={goal.id}/>
+                    </div>
                 ))}
             </FormGroup>
+
         </div >
     )
 }
