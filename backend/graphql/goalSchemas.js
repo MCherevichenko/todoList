@@ -9,6 +9,7 @@ const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLDate = require('graphql-date');
 const GoalModel = require('../models').Goal;
 const TaskModel = require('../models').Task;
+const exec  = require('child_process').exec;
 
 const taskType = new GraphQLObjectType({
   name: "task",
@@ -77,6 +78,49 @@ const queryType = new GraphQLObjectType({
           return goals
         },
       },
+      goal: {
+        type: new GraphQLList(goalType),
+        args: {
+          id: {
+            name: 'id',
+            type: GraphQLInt
+          }
+        },
+        resolve: function(root, params) {
+          const currentGoal = GoalModel.findAll({
+            where: { 
+              id: params.id
+            }
+          })
+          if(!currentGoal) {
+            throw new Error('Error')
+          }
+          return currentGoal
+        }
+      },
+      task: {
+        type: new GraphQLList(taskType),
+        args: {
+          id: {
+            name: 'goal_id',
+            type: GraphQLInt
+          }
+        },
+        resolve: function (root, params) {
+          const asd = TaskModel.findAll({
+            order: [
+              ['createdAt', 'ASC']
+            ],
+            where: {
+              goal_id: params.id,
+            }
+          })
+          if (!asd) {
+            throw new Error('Error')
+          }
+          return asd
+        }
+      },
       tasks: {
         type: new GraphQLList(taskType),
         resolve: function () {
@@ -91,23 +135,7 @@ const queryType = new GraphQLObjectType({
           return tasks
         }
       },
-      task: {
-        type: new GraphQLList(taskType),
-        resolve: function (currentId) {
-          const asd = TaskModel.findAll({
-            order: [
-              ['createdAt', 'ASC']
-            ],
-            where: {
-              goal_id: 3,
-            }
-          })
-          if (!asd) {
-            throw new Error('Error')
-          }
-          return asd
-        }
-      }
+      
     }
   }
 });

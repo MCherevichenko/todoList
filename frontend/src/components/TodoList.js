@@ -17,7 +17,6 @@ const GET_GOALS = gql`
 function TodoList() {
     const { loading, error, data } = useQuery(GET_GOALS);
     const goals = data && data?.goals;
-    // console.log(goals?.[0].title);
     if (loading ) {
         return <h2>Loading...</h2>
     }
@@ -25,7 +24,7 @@ function TodoList() {
         <div className='goal-form'>
             <FormGroup >
                 {goals.map((goal) => (
-                    <div key={goal.id}>
+                    <div key={goal.id} className='goal-container'>
                         <FormControlLabel  control={<Checkbox defaultChecked={goal.done} />} label={goal.title} />
                         <TaskList goal_id={goal.id}/>
                     </div>

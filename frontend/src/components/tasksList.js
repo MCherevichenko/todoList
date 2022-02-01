@@ -16,15 +16,26 @@ const GET_TASKS = gql`
 `;
 
 function TaskList(props) {
-    const {loading, error, data} = useQuery(GET_TASKS);
-    // console.log(props.goal_id);
+    const { loading, error, data } = useQuery(GET_TASKS);
+    const tasks = data?.tasks;
+
+    if (loading) {
+        return <h2>Loading...</h2>
+    }
+    console.log(tasks.length)
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-            <FormControlLabel
-                label="Child 1"
-                control={<Checkbox />}
-            />
-        </Box>
+        <div>
+            {tasks.length === 0 ? <h2>Пусто</h2> : tasks.map((task) => ( task.goal_id === props.goal_id ?
+                <Box key={task.id} sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
+                    <FormControlLabel
+                        label={task.text}
+                        control={<Checkbox />}
+                    />
+                </Box> : <div key={Math.random()}>There are no tasks</div>
+            ))
+            }
+        </div>
+
     )
 }
 

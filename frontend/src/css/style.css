@@ -3,5 +3,12 @@
 }
 
 .goal-form{
-    padding: 10% 25%;
+    padding: 10% 15%;
+    
+}
+
+.goal-container{
+    border: 1px solid black;
+    padding: 5% 5%;
+    min-width:  300px;
 }
