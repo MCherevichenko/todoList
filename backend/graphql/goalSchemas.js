@@ -1,6 +1,7 @@
 const GraphQLSchema = require('graphql').GraphQLSchema;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLID = require('graphql').GraphQLID;
 const GraphQLString = require('graphql').GraphQLString;
@@ -8,15 +9,44 @@ const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLDate = require('graphql-date');
 const GoalModel = require('../models').Goal;
 
+const taskType = new GraphQLObjectType({
+  name: "task",
+  fields: function () {
+    return {
+      id: {
+        type: GraphQLInt
+      },
+      text: {
+        type: GraphQLString
+      },
+      done: {
+        type: GraphQLBoolean
+      },
+      goal_id: {
+        type: GraphQLInt
+      },
+      createdAt: {
+        type: GraphQLDate
+      },
+      updatedAt: {
+        type: GraphQLDate
+      }
+    }
+  }
+})
+
 const goalType = new GraphQLObjectType({
   name: "goal",
-  fields: function() {
+  fields: function () {
     return {
       id: {
         type: GraphQLInt
       },
       title: {
         type: GraphQLString
+      },
+      done: {
+        type: GraphQLBoolean
       },
       createdAt: {
         type: GraphQLDate
@@ -60,6 +90,9 @@ const mutation = new GraphQLObjectType({
           title: {
             type: new GraphQLNonNull(GraphQLString)
           },
+          done: {
+            type: new GraphQLNonNull(GraphQLBoolean)
+          },
         },
         resolve: function (root, params) {
           const goalModel = new GoalModel(params);
@@ -83,19 +116,19 @@ const mutation = new GraphQLObjectType({
         },
         resolve(root, params) {
           return GoalModel
-          .findByPk(params.id)
-          .then(goal => {
-            if (!goal) {
-              throw new Error('Not found');
-            }
-            return goal
-              .update({
-                title: params.title || goal.title,
-              })
-              .then(() => { return goal; })
-              .catch((error) => { throw new Error(error); });
-          })
-          .catch((error) => { throw new Error(error); });
+            .findByPk(params.id)
+            .then(goal => {
+              if (!goal) {
+                throw new Error('Not found');
+              }
+              return goal
+                .update({
+                  title: params.title || goal.title,
+                })
+                .then(() => { return goal; })
+                .catch((error) => { throw new Error(error); });
+            })
+            .catch((error) => { throw new Error(error); });
         }
       },
       removeGoal: {
@@ -107,21 +140,21 @@ const mutation = new GraphQLObjectType({
         },
         resolve(root, params) {
           return GoalModel
-          .findByPk(params.id)
-          .then(goal => {
-            if (!goal) {
-              throw new Error('Not found');
-            }
-            return goal
-              .destroy()
-              .then(() => { return goal; })
-              .catch((error) => { throw new Error(error); });
-          })
-          .catch((error) => { throw new Error(error); });
+            .findByPk(params.id)
+            .then(goal => {
+              if (!goal) {
+                throw new Error('Not found');
+              }
+              return goal
+                .destroy()
+                .then(() => { return goal; })
+                .catch((error) => { throw new Error(error); });
+            })
+            .catch((error) => { throw new Error(error); });
         }
       }
     }
   }
 });
 
-module.exports = new GraphQLSchema({query: queryType, mutation: mutation});
+module.exports = new GraphQLSchema({ query: queryType, mutation: mutation });

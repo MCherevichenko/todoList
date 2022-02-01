@@ -13,7 +13,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Task.init({
-    text: DataTypes.STRING
+    text: DataTypes.STRING,
+    goal_id: DataTypes.INTEGER,
+    done: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Task',
