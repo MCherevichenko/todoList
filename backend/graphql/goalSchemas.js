@@ -107,7 +107,7 @@ const queryType = new GraphQLObjectType({
           }
         },
         resolve: function (root, params) {
-          const asd = TaskModel.findAll({
+          const task = TaskModel.findAll({
             order: [
               ['createdAt', 'ASC']
             ],
@@ -115,10 +115,10 @@ const queryType = new GraphQLObjectType({
               goal_id: params.id,
             }
           })
-          if (!asd) {
+          if (!task) {
             throw new Error('Error')
           }
-          return asd
+          return task
         }
       },
       tasks: {
@@ -166,20 +166,17 @@ const mutation = new GraphQLObjectType({
       updateGoal: {
         type: goalType,
         args: {
-          id: {
+          idGoal: {
             name: 'id',
             type: new GraphQLNonNull(GraphQLInt)
           },
-          title: {
-            type: new GraphQLNonNull(GraphQLString)
-          },
-          done: {
+          doneGoal: {
             type: new GraphQLNonNull(GraphQLBoolean)
           }
         },
         resolve(root, params) {
           return GoalModel
-            .findByPk(params.id)
+            .findByPk(params.idGoal)
             .then(goal => {
               if (!goal) {
                 throw new Error('Not found');
@@ -187,7 +184,7 @@ const mutation = new GraphQLObjectType({
               return goal
                 .update({
                   title: params.title || goal.title,
-                  done: params.done
+                  done: params.doneGoal
                 })
                 .then(() => { return goal; })
                 .catch((error) => { throw new Error(error); });
