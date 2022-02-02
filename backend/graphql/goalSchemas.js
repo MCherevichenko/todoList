@@ -187,6 +187,7 @@ const mutation = new GraphQLObjectType({
               return goal
                 .update({
                   title: params.title || goal.title,
+                  done: params.done
                 })
                 .then(() => { return goal; })
                 .catch((error) => { throw new Error(error); });
@@ -245,9 +246,6 @@ const mutation = new GraphQLObjectType({
             name: 'id',
             type: new GraphQLNonNull(GraphQLInt)
           },
-          text: {
-            type: new GraphQLNonNull(GraphQLString)
-          },
           done: {
             type: new GraphQLNonNull(GraphQLBoolean)
           }
@@ -257,11 +255,12 @@ const mutation = new GraphQLObjectType({
             .findByPk(params.id)
             .then(task => {
               if (!task) {
+                console.log(task);
                 throw new Error('Not found');
               }
               return task
                 .update({
-                  text: params.text || task.text,
+                  done: params.done
                 })
                 .then(() => { return task; })
                 .catch((error) => { throw new Error(error); });

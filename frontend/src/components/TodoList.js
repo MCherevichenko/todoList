@@ -14,23 +14,45 @@ const GET_GOALS = gql`
     }
 `;
 
+const mutateTask = gql`
+        mutation ($id: Int,$done: Boolean){
+        updateTask(
+        done: $done
+        ) {
+        id,
+        done
+        }
+    }
+`;
+
 function TodoList() {
     const { loading, error, data } = useQuery(GET_GOALS);
     const goals = data && data?.goals;
-    if (loading ) {
+
+    if (loading) {
         return <h2>Loading...</h2>
     }
+
     return (
         <div className='goal-form'>
             <FormGroup >
-                {goals.map((goal) => (
-                    <div key={goal.id} className='goal-container'>
-                        <FormControlLabel  control={<Checkbox defaultChecked={goal.done} />} label={goal.title} />
-                        <TaskList goal_id={goal.id}/>
-                    </div>
+                {goals.map((goal, index, arr) => (
+                    goal === goals[0] ?
+                        <div key={goal.id} className='goal-container'>
+                            <FormControlLabel control={
+                                <Checkbox checked={goal.done} />}
+                                label={goal.title}
+                            />
+                            <TaskList goal_id={goal.id} goal_done={true} />
+                        </div>
+                        :
+                        <div key={goal.id} className='goal-container'>
+                            <FormControlLabel disabled={!goals[index - 1].done} control={<Checkbox checked={goal.done} />} label={goal.title} />
+                            <TaskList goal_id={goal.id} goal_done={goals[index - 1].done} />
+                        </div>
+
                 ))}
             </FormGroup>
-
         </div >
     )
 }
