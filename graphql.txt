@@ -1,0 +1,100 @@
+------------------------
+Add task
+mutation {
+  addTask(
+    text: "First task",
+    done: false,
+    goal_id: 3,
+  ) {
+    updatedAt
+  }
+}
+------------------------
+Mutate task
+mutation {
+  updateTask(
+    id: 1,
+    done: SOME_VAL
+  ) {
+    id,
+    updatedAt
+  }
+}
+------------------------
+Delete task
+mutation {
+  removeTask(
+    id: 1,
+  ) {
+    id,
+    updatedAt
+  }
+}
+------------------------
+Get Goal
+{
+  goal (id:3){
+    id
+  }
+}
+------------------------
+Add Goal
+mutation {
+  addGoal(
+    title: "Some text",
+    done: false
+  ) {
+    id,
+    updatedAt
+  }
+}
+------------------------
+Edit Goal
+mutation {
+  updateGoal(
+    id:1,
+    title: "Some text",
+    done: false
+  ) {
+    id,
+    updatedAt
+  }
+}
+------------------------
+Delete Goal
+mutation {
+  removeGoal(
+    id:1,
+  ) {
+    id,
+    updatedAt
+  }
+}
+------------------------
+Get all tasks
+{
+  tasks{
+    id
+    text
+    done
+  }
+}
+------------------------
+Get all Goals
+{
+  goals{
+    id
+    title
+    done
+  }
+}
+------------------------
+Get all tasks of one Goal
+{
+  task (id:3){
+    id
+  }
+}
+------------------------
+
+
